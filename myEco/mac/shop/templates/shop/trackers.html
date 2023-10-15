@@ -1,0 +1,170 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %} Title of About {% endblock %}
+{% block body %}
+
+
+
+<form method="POST" action="#" id="tracker">{% csrf_token %}
+    <div class="form-row container">
+        <div class="form-group col-md-6">
+            <label for="inputname">Order Id</label>
+
+            <input type="text" class="form-control" id="orderId" name="order_id" placeholder="Order Id">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="inputEmail4">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+        </div>
+        <button type="submit" class="btn btn-primary">Track Order</button>
+    </div>
+
+
+
+
+
+</form>
+
+
+<div class="container my-4">
+    <h1 class="my-3">Track Your Order</h1>
+    <div class="inbox my-4">
+        <ol class="list-group list-group-numbered" id="items">
+
+        </ol>
+    </div>
+</div>
+
+
+<div class="container my-4">
+    <h1 class="my-3">Name of Order</h1>
+    <div class="inbox my-4">
+        <ol class="list-group list-group-numbered" id="itemsName">
+
+        </ol>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
+
+
+
+
+{% block js %}
+<script>
+
+
+    $('#tracker').submit(function (event) {
+        // console.log(document.getElementById('itermsName').innerHTML)
+        document.getElementById('itemsName').innerHTML=""
+
+
+        $('#items').empty();
+        var formData = {
+            'order_id': $('input[name=order_id]').val(),
+            'email': $('input[name=email]').val(),
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        };
+
+
+
+
+        $.ajax({
+            type: 'POST',
+            url: '/shop/tracker/',
+            data: formData,
+            encode: true
+        })
+
+
+
+            .done(function (data) {
+                data = JSON.parse(data)
+                //   console.log(data)
+                orders = data[1]
+                //   console.log(orders)
+                data = data[0]
+                strArray = []
+                if (data.length > 0 && data != {}) {
+                    for (i = 0; i < data.length; i++) {
+                        let text = data[i]["text"]
+                        let time = data[i]["time"]
+                        cx = time.length
+                        date = ""
+                        for (j = 0; j < cx; j++) {
+                            if (time[j] == "-") {
+                                strArray.push(date)
+                                date = ""
+                                continue
+                            }
+                            date += time[j]
+                        }
+                        strArray.push(date)
+                        date = ""
+
+
+                        strArray.reverse()
+                        for (j = 0; j < strArray.length; j++) {
+                            date += strArray[j]
+                            if (j != strArray.length - 1)
+                                date += "/"
+                        }
+                        // console.log(strArray)
+                        str = `<li class="list-group-item d-flex justify-content-between align-items-start my-2">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold"><h4>${text}</h4></div>
+                     
+                    </div>
+                    <span class="badge bg-primary rounded-pill"><h5>${date}</h5></span>
+                </li>`
+                        $('#items').append(str)
+                        strArray = []
+
+                    }
+                    orders = JSON.parse(orders)
+                    console.log(orders)
+                    for (let item in orders) {
+
+                        orderName = orders[item][1]
+                        orderCount = orders[item][0]
+                        str = `<li class="list-group-item d-flex justify-content-between align-items-start my-2">
+            <div class="ms-2 me-auto">
+                        <div class="fw-bold"><h6>${orderName}</h6></div>
+                     
+                    </div>
+                    <span class="badge bg-primary rounded-pill"><h6>${orderCount}</h6></span>
+                    </li>`
+                        $('#itemsName').append(str)
+
+
+
+                    }
+                }
+                else {
+                    console.log("ASD")
+                    str = `<li class="list-group-item d-flex justify-content-between align-items-start my-2">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold"><h4>Sorry your order is not tracked </h4></div>
+                     
+                    </div>
+                    
+                </li>`
+                    $('#items').append(str)
+                }
+
+            });
+        event.preventDefault();
+    });
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}

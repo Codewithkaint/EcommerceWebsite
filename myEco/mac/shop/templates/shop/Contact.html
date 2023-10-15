@@ -1,0 +1,87 @@
+
+
+{% extends 'shop/basic.html' %}
+
+{% block title %} Title of About {% endblock %}
+{% block body %} 
+<div class="container">
+<h2>Contact US</h2>
+<form class="my-2" action="/shop/contact/" method="post"> {% csrf_token %}
+    <div class="form-group">
+      <label for="exampleFormControlInput1">Email address</label>
+      <input type="email" class="form-control" name="email" id="exampleFormControlInput1" placeholder="Enter Email">
+    </div>
+    <div class="form-group">
+      <label for="exampleFormControlInput1">Phone Number</label>
+      <input type="tel" class="form-control" name="number" id="phone" placeholder="Enter PhoneNo.">
+    </div>
+    <div class="form-group">
+      <label for="text">Item Name</label>
+      <input type="text" class="form-control" name="item" id="text" placeholder="Enter ItemName">
+    </div>
+    
+    <div class="form-group">
+      <label for="exampleFormControlTextarea1">Enter complaint about Item</label>
+      <textarea name="query" class="form-control" id="desc" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Submit</button>
+  </form>
+
+</div>
+
+
+<script>
+
+    console.log("Working")
+    if(localStorage.getItem('cart')==null){
+     var cart={};
+    }
+    else{
+      cart = JSON.parse(localStorage.getItem('cart'));
+      let tct=0
+    for(let key in cart){
+      tct+=(cart[key])
+      
+    }
+      document.getElementById('num').innerHTML=Object.keys(cart).length
+    }
+    $('.cart').click(function(){
+     
+    var idqs= this.id.toString();
+     console.log(idqs)
+    
+    if (cart[idqs] !=undefined){
+    cart[idqs] = cart[idqs] + 1;
+    let tct=0
+    for(let key in cart){
+      tct+=(cart[key])
+      
+    }
+    document.getElementById('num').innerHTML=tct
+    }
+    else
+    {
+    cart[idqs] = 1;
+    let tct=0
+    for(let key in cart){
+      tct+=(cart[key])
+      
+    }
+    document.getElementById('num').innerHTML=tct
+    }
+    
+    localStorage.setItem('cart',JSON.stringify(cart))
+    // console.log(cart)
+    tct=0
+    for(let key in cart){
+      tct+=(cart[key])
+      
+    }
+    
+    document.getElementById('num').innerHTML=tct
+    
+    });
+    
+    
+    </script>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %} Title of About {% endblock %}
+
+
+{% block css %}
+
+#mon{
+  display:flex;
+}
+
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="box">
+        <h1>Step-1:Apki Apni Dukan CheckOut Item you want</h1>
+        <div class="inbox my-4">
+            <ol class="list-group list-group-numbered" id="items">
+                
+            </ol>
+        </div>
+    </div>
+    <div class="box">
+       <span id="mon"> <h5 >Your total price is Rs.<h5 id="val"></h5></h5>
+       </span>
+       <hr>
+    </div>
+
+
+
+
+    <div class="box">
+        <h1>Step-2:Enter your relevant Information</h1>
+        <div class="inbox my-4">
+            <form  method="post" action="/shop/checkout/">{% csrf_token %}
+
+
+
+
+
+              <input type="hidden" name="itemsJson" id="itemsJson">
+              <input type="hidden" name="prices" id="prices">
+                
+                <div class="form-group">
+                  
+                  <label for="email">Email address</label>
+                  <input type="email" name="email" class="form-control" id="email" placeholder="Enter Email">
+                </div>
+                <div class="form-group">
+                  <label for="text">Name</label>
+                  <input type="name" name="name" class="form-control" id="name" placeholder="Enter Name">
+                </div>
+                <div class="form-group">
+                  <label for="number">Phone Number</label>
+                  <input type="tel" name="number" class="form-control" id="phone" placeholder="Enter Number">
+                </div>
+               
+                <div class="form-group">
+                <div class="form-group">
+                  <label for="text">Address 1</label>
+                  <input type="text" class="form-control" id="add1" name="add1" placeholder="Enter First Address"> 
+                </div>
+                <div class="form-group">
+                  <label for="text">Address 2</label>
+                  <input type="text" class="form-control" id="add2" name="add2" placeholder="Enter Second Address">
+                </div>
+                
+                <button type="submit" class="btn btn-success">Submit</button>
+
+
+              </form>
+
+
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+{% block js %}
+<script>
+  productNames=[]
+if(localStorage.getItem('cart')!=null){
+
+    cart = JSON.parse(localStorage.getItem('cart'));
+    let tct=0
+  for(let key in cart){
+    tct+=(cart[key][0])
+    
+  }
+  document.getElementById('num').innerHTML=tct
+
+totPrice=0
+for(item in cart){
+    name=cart[item][1]
+    productNames.push(name)
+    price=cart[item][2]
+    numPrice=parseInt(price)
+    tot=cart[item][0]
+    totNum=parseInt(tot)
+    totItemPrice=totNum*numPrice
+    totPrice+=totItemPrice
+    add=`  <li class="list-group-item d-flex justify-content-between align-items-start my-2">
+                    
+                        
+                     
+                        <span class="badge bg-secondry rounded-pill"><h6>${name}</h6></span>
+                    <span class="badge bg-secondry rounded-pill"><h6>${price}</h6></span>
+                    <span class="badge bg-primary rounded-pill"><h6>${tot}</h6></span>
+                </li> `
+    $('#items').append(add)
+    
+
+}
+
+
+}
+else{
+    head=" <h3 class='my-2'>No Item to Display in cart</h3>"
+        $('#items').append(head)
+}
+
+document.getElementById('val').innerHTML=totPrice
+$('#prices').val(totPrice)
+console.log(document.getElementById('val').innerHTML)
+console.log(document.getElementById('prices').innerHTML)
+$('#itemsJson').val(JSON.stringify(cart))
+{% if check %}
+
+
+
+alert('Your order id is {{id}}. Your Order is rady to Ship')
+localStorage.clear()
+document.getElementById('mon').innerHTML=' <h3> Your Order is Placed. You can track it now. </h3>'
+
+
+{% endif %}
+
+console.log(document.getElementById('itemsJson').innerHTML)
+document.getElementById('itemsJson').innerHTML=productNames
+console.log(document.getElementById('itemsJson').innerHTML)
+
+
+
+
+</script>
+
+{% endblock %}
